@@ -23,6 +23,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/admissions(.*)',
   '/api/settings(.*)',
   '/api/application(.*)',
+  '/api/quiz(.*)',
 ])
 
 export default clerkMiddleware((auth, request) => {
