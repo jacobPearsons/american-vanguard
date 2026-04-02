@@ -15,6 +15,8 @@ export function useQuizSession(quiz: Quiz) {
   })
   const [hasStarted, setHasStarted] = useState(false)
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const sessionRef = useRef(session)
+  sessionRef.current = session
 
   // Restore from localStorage on mount
   useEffect(() => {
@@ -39,7 +41,7 @@ export function useQuizSession(quiz: Quiz) {
     if (!hasStarted || session.isSubmitted) return
 
     autoSaveTimerRef.current = setInterval(() => {
-      localStorage.setItem(`${STORAGE_KEY}_${quiz.id}`, JSON.stringify(session))
+      localStorage.setItem(`${STORAGE_KEY}_${quiz.id}`, JSON.stringify(sessionRef.current))
     }, AUTO_SAVE_INTERVAL)
 
     return () => {
@@ -47,7 +49,7 @@ export function useQuizSession(quiz: Quiz) {
         clearInterval(autoSaveTimerRef.current)
       }
     }
-  }, [hasStarted, session, quiz.id])
+  }, [hasStarted, quiz.id])
 
   const startQuiz = useCallback(() => {
     setSession((prev) => ({
@@ -77,12 +79,22 @@ export function useQuizSession(quiz: Quiz) {
   }, [quiz.questions.length])
 
   const nextQuestion = useCallback(() => {
-    goToQuestion(session.currentIndex + 1)
-  }, [session.currentIndex, goToQuestion])
+    setSession((prev) => {
+      if (prev.currentIndex < quiz.questions.length - 1) {
+        return { ...prev, currentIndex: prev.currentIndex + 1 }
+      }
+      return prev
+    })
+  }, [quiz.questions.length])
 
   const prevQuestion = useCallback(() => {
-    goToQuestion(session.currentIndex - 1)
-  }, [session.currentIndex, goToQuestion])
+    setSession((prev) => {
+      if (prev.currentIndex > 0) {
+        return { ...prev, currentIndex: prev.currentIndex - 1 }
+      }
+      return prev
+    })
+  }, [])
 
   const submitQuiz = useCallback((): QuizResult => {
     let totalPoints = 0
@@ -121,6 +133,10 @@ export function useQuizSession(quiz: Quiz) {
 
     setSession((prev) => ({ ...prev, isSubmitted: true }))
     localStorage.removeItem(`${STORAGE_KEY}_${quiz.id}`)
+    
+    if (autoSaveTimerRef.current) {
+      clearInterval(autoSaveTimerRef.current)
+    }
 
     return result
   }, [quiz, session.answers])
