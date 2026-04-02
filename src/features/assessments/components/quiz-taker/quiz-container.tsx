@@ -14,11 +14,14 @@ import type { Quiz, QuizResult } from '../../types/assessment.types'
 
 interface QuizContainerProps {
   quiz: Quiz
+  useServerGrading?: boolean
 }
 
-export function QuizContainer({ quiz }: QuizContainerProps) {
+export function QuizContainer({ quiz, useServerGrading = false }: QuizContainerProps) {
   const router = useRouter()
   const [result, setResult] = useState<QuizResult | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const {
     session,
@@ -52,10 +55,45 @@ export function QuizContainer({ quiz }: QuizContainerProps) {
     startTimer()
   }, [startQuiz, startTimer])
 
-  const handleSubmit = useCallback(() => {
-    const quizResult = submitQuiz()
-    setResult(quizResult)
-  }, [submitQuiz])
+  const handleSubmit = useCallback(async () => {
+    if (useServerGrading) {
+      // Server-side grading
+      setIsSubmitting(true)
+      setSubmitError(null)
+      
+      try {
+        const response = await fetch(`/api/quiz/${quiz.id}/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            quizId: quiz.id,
+            answers: session.answers,
+            timeSpent: session.timeSpent,
+          }),
+        })
+        
+        const data = await response.json()
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to submit quiz')
+        }
+        
+        setResult(data.result)
+      } catch (error) {
+        console.error('Submission error:', error)
+        setSubmitError(error instanceof Error ? error.message : 'Failed to submit quiz')
+        // Fall back to client-side grading
+        const quizResult = submitQuiz()
+        setResult(quizResult)
+      } finally {
+        setIsSubmitting(false)
+      }
+    } else {
+      // Client-side grading
+      const quizResult = submitQuiz()
+      setResult(quizResult)
+    }
+  }, [submitQuiz, useServerGrading, quiz.id, session.answers, session.timeSpent])
 
   const handleRetake = useCallback(() => {
     router.refresh()
@@ -109,8 +147,14 @@ export function QuizContainer({ quiz }: QuizContainerProps) {
         <QuizQuestion
           question={currentQuestion}
           selectedOptions={selectedAnswers}
-          onSelect={(optionId) => selectAnswer(currentQuestion.id, optionId)}
+          onSelect={(optionId, isMultiSelect) => selectAnswer(currentQuestion.id, optionId, isMultiSelect)}
         />
+      )}
+
+      {submitError && (
+        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+          {submitError}
+        </div>
       )}
 
       <QuizNavigation
@@ -120,6 +164,7 @@ export function QuizContainer({ quiz }: QuizContainerProps) {
         isFirst={isFirstQuestion}
         isLast={isLastQuestion}
         hasAnswer={selectedAnswers.length > 0}
+        isSubmitting={isSubmitting}
       />
     </div>
   )

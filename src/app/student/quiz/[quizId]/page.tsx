@@ -107,7 +107,7 @@ export default async function QuizPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-gray-100 py-8">
-      <QuizContainer quiz={quiz} />
+      <QuizContainer quiz={quiz} useServerGrading={true} />
     </div>
   )
 }

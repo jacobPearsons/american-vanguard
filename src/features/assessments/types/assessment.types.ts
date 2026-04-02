@@ -1,4 +1,4 @@
-export type QuestionType = 'multiple-choice' | 'true-false'
+export type QuestionType = 'multiple-choice' | 'true-false' | 'multiple-select'
 
 export interface QuestionOption {
   id: string
@@ -12,8 +12,10 @@ export interface Question {
   type: QuestionType
   text: string
   mediaUrls?: string[]
+  mediaType?: 'image' | 'video' | 'audio'
   options: QuestionOption[]
   points: number
+  allowMultiple?: boolean // for multiple-select
   tags?: string[]
   difficulty?: 'easy' | 'medium' | 'hard'
 }
