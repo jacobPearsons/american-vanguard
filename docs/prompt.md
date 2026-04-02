@@ -1,0 +1,1 @@
+ give tips on how to teach ai to arrange and make clean code from designing components to structuring logic in the lifecycle that could be applicable from website to webapps to native apps with concise and strict rules of engagement that makes the project to be productive. Steps should be short and it should be explanatory to any model.

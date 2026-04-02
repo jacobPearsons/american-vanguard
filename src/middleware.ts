@@ -1,27 +1,39 @@
-import { authMiddleware } from '@clerk/nextjs'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-export default authMiddleware({
-  publicRoutes: [
-    '/',
-    '/api/clerk-webhook',
-    '/api/drive-activity/notification',
-    '/api/payment/success',
-  ],
-  ignoredRoutes: [
-    '/api/auth/callback/discord',
-    '/api/auth/callback/notion',
-    '/api/auth/callback/slack',
-    '/api/flow',
-    '/api/cron/wait',
-  ],
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/about',
+  '/contact',
+  '/admissions',
+  '/academics',
+  '/research',
+  '/campus',
+  '/apply',
+  '/apply/status',
+  '/payments',
+  '/sign-in',
+  '/sign-up',
+  '/forgot-password',
+  '/sso-callback',
+  '/api/auth(.*)',
+  '/api/clerk-webhook',
+  '/api/payment/success',
+  '/api/flow(.*)',
+  '/api/cron(.*)',
+  '/api/admissions(.*)',
+  '/api/settings(.*)',
+  '/api/application(.*)',
+])
+
+export default clerkMiddleware((auth, request) => {
+  if (!isPublicRoute(request)) {
+    auth.protect()
+  }
 })
 
 export const config = {
-  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
+  matcher: [
+    '/((?!\\.(?:png|jpg|jpeg|svg|gif|webp|ico|css|js)$|_next).*)',
+    '/(api|trpc)(/.*)?$',
+  ],
 }
-
-// https://www.googleapis.com/auth/userinfo.email
-// https://www.googleapis.com/auth/userinfo.profile
-// https://www.googleapis.com/auth/drive.activity.readonly
-// https://www.googleapis.com/auth/drive.metadata
-// https://www.googleapis.com/auth/drive.readonly

@@ -1,0 +1,308 @@
+Context Stacking
+Making AI Understand the Entire Codebase
+
+Context Stacking means building a structured context bundle that the AI reads before writing code.
+
+Instead of giving AI random prompts, you give it stacked project knowledge in a fixed order.
+
+Think of it like booting the AI into your project environment.
+
+The 5-Layer Context Stack
+
+High-performing teams typically stack context in five layers.
+
+Layer 1 — Project Identity
+Layer 2 — Architecture Rules
+Layer 3 — Folder Structure
+Layer 4 — Feature Context
+Layer 5 — Task Prompt
+
+Each layer gives the AI more understanding of the system.
+
+Layer 1 — Project Identity
+
+First tell the AI what the project is.
+
+Example:
+
+Project: AI-powered job marketplace
+
+Stack:
+Next.js (App Router)
+TypeScript
+TailwindCSS
+Framer Motion
+Clerk authentication
+PostgreSQL with RLS
+
+Architecture:
+Feature-based modular architecture.
+
+This establishes global context.
+
+Without this, the AI will make assumptions.
+
+Layer 2 — Architecture Rules
+
+Next give the AI the engineering rules.
+
+Example:
+
+Architecture Rules:
+
+- UI components must not fetch data directly.
+- Data access must go through services.
+- State logic must exist inside hooks.
+- Routes must remain thin.
+- Components must be reusable.
+
+This prevents AI from generating bad patterns.
+
+Layer 3 — Project Structure
+
+Now provide the folder blueprint.
+
+Example:
+
+Project Structure:
+
+app/
+components/
+features/
+hooks/
+services/
+lib/
+types/
+animations/
+styles/
+
+AI now understands where code belongs.
+
+Without this step, AI often places files incorrectly.
+
+Layer 4 — Feature Context
+
+Now explain the specific feature.
+
+Example:
+
+Feature: Notification System
+
+Users receive notifications when actions occur.
+
+Requirements:
+- real-time updates
+- unread state
+- ability to mark as read
+- animated dropdown display
+
+This provides task-specific understanding.
+
+Layer 5 — Task Prompt
+
+Now you ask the AI to implement the feature.
+
+Example:
+
+Follow the AI development workflow.
+
+1. Design the feature architecture.
+2. Define the component hierarchy.
+3. Define the data flow.
+4. Implement the feature.
+5. Refactor the code.
+
+Because of the previous context, the AI generates much better code.
+
+Example Context Stack Prompt
+
+This is a real-world stacked prompt.
+
+Project Context:
+
+This is a Next.js application using:
+
+- Next.js App Router
+- TailwindCSS
+- Framer Motion
+- Clerk authentication
+- PostgreSQL with RLS
+
+Architecture Rules:
+
+- UI components cannot fetch data directly
+- Hooks manage state logic
+- Services handle data access
+- Routes remain thin
+
+Project Structure:
+
+app/
+components/
+features/
+hooks/
+services/
+lib/
+types/
+
+Feature:
+
+Create a notifications dropdown system.
+
+Requirements:
+
+- display latest notifications
+- unread state
+- mark as read
+- animate dropdown
+
+Task:
+
+Follow the AI development workflow.
+
+1. Design the architecture
+2. Define component hierarchy
+3. Define data flow
+4. Implement the code
+5. Refactor
+
+The output quality becomes dramatically better.
+
+Context Stacking with Files
+
+Even more powerful is feeding the AI key project files.
+
+Example context files:
+
+docs/project-structure-blueprint.md
+docs/component-design-rules.md
+docs/frontend-lifecycle.md
+docs/ai-dev-workflow.md
+
+Prompt example:
+
+Use the following documents as architectural rules:
+
+- project-structure-blueprint.md
+- component-design-rules.md
+- frontend-lifecycle.md
+
+Follow them strictly when generating code.
+
+Now the AI inherits the project's engineering discipline.
+
+Context Windows Strategy
+
+AI models have context limits, so advanced teams load only critical files.
+
+Typical stack:
+
+Architecture docs
++
+Feature folder
++
+Related components
++
+Task prompt
+
+This gives the AI maximum relevant knowledge.
+
+Context Compression Trick
+
+Large files can overwhelm the model.
+
+Instead, summarize the context.
+
+Example:
+
+Bad:
+
+Paste entire codebase
+
+Good:
+
+Summary of the dashboard feature:
+
+- uses dashboardService.ts
+- uses useDashboardData hook
+- renders StatsCard components
+
+This gives AI understanding without overload.
+
+Persistent Context
+
+Some teams keep a permanent project context file.
+
+Example:
+
+docs/project-context.md
+
+It contains:
+
+Project identity
+Tech stack
+Architecture rules
+Folder structure
+Coding conventions
+
+AI reads it before every task.
+
+Context Stacking Mental Model
+
+Think of it like booting AI into your project.
+
+Boot Layer
+↓
+Architecture Layer
+↓
+Project Structure Layer
+↓
+Feature Context
+↓
+Task Execution
+
+Without this stack, AI is coding blind.
+
+Why Context Stacking Works
+
+Large language models generate code based on pattern matching.
+
+If you provide:
+
+architecture patterns
+
+project patterns
+
+coding rules
+
+The AI copies those patterns perfectly.
+
+Pro-Level Trick: Context Anchors
+
+You can define anchor statements that the AI must obey.
+
+Example:
+
+Architecture Anchor:
+
+All frontend data must flow:
+
+UI → Hook → Service → Database
+
+AI will consistently reproduce this pattern.
+
+The Real Secret
+
+Elite AI-assisted teams do not rely on one prompt.
+
+They rely on:
+
+Documentation
++
+Workflow
++
+Context stacking
++
+Structured prompting
+
+Together this turns AI into a powerful engineering collaborator.

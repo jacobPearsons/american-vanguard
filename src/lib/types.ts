@@ -6,6 +6,16 @@ export const EditUserProfileSchema = z.object({
   name: z.string().min(1, 'Required'),
 })
 
+export const PersonalInfoSchema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  phone: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  country: z.string().optional(),
+  dateOfBirth: z.string().optional(),
+})
+
 export const WorkflowFormSchema = z.object({
   name: z.string().min(1, 'Required'),
   description: z.string().min(1, 'Required'),

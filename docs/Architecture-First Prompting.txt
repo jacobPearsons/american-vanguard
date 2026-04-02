@@ -1,0 +1,257 @@
+1. Architecture-First Prompting
+(The most important technique)
+
+Most people ask AI:
+
+“Build a dashboard”
+
+This forces the model to generate code immediately, which leads to poor structure.
+
+Instead, force the AI to design before coding.
+
+Architecture-First Prompt Pattern
+You are a senior software architect.
+
+Before writing any code:
+
+1. Analyze the feature requirements.
+2. Design the system architecture.
+3. Define the folder structure.
+4. Define the component hierarchy.
+5. Define the data flow.
+
+Only after that implement the code.
+Expected AI Output Structure
+
+1️⃣ Problem analysis
+2️⃣ Architecture design
+3️⃣ Component hierarchy
+4️⃣ Data flow
+5️⃣ Implementation
+
+This prevents chaotic code generation.
+
+2. Constraint-Driven Prompting
+
+AI performs significantly better when explicit constraints are defined.
+
+Example constraints:
+
+Rules:
+- Components must be under 200 lines
+- Functions under 20 lines
+- Separate UI, hooks, and services
+- Use reusable components
+- Follow the project structure blueprint
+
+Why this works:
+
+AI models respect explicit constraints extremely well.
+
+Without constraints they tend to overgenerate.
+
+3. Layered Implementation Prompting
+
+Instead of asking AI to build everything at once, force it to build the system layer by layer.
+
+Layer Order
+
+1️⃣ Types
+2️⃣ Services
+3️⃣ Hooks
+4️⃣ Components
+5️⃣ Routes
+
+Prompt example:
+
+Implement the feature step-by-step:
+
+1. First define the TypeScript types
+2. Then implement the service layer
+3. Then create reusable hooks
+4. Then build UI components
+5. Finally integrate the feature into the route
+
+This results in cleaner architecture and better separation of concerns.
+
+4. Intent-Driven Coding
+
+AI sometimes generates code without understanding why something exists.
+
+Force the AI to explain the intent of each module.
+
+Prompt addition:
+
+Before writing each file, explain its purpose in one sentence.
+
+Example:
+
+File: useNotifications.ts
+Purpose: manages notification state and fetches updates from the service layer.
+
+This improves design quality and readability.
+
+5. Self-Refactoring Prompt
+
+AI often writes first-draft code.
+
+Force it to refactor its own output.
+
+Prompt addition:
+
+After writing the code:
+
+1. Refactor for readability
+2. Remove duplication
+3. Simplify functions
+4. Ensure naming clarity
+
+This dramatically improves output quality.
+
+6. Architectural Guardrails
+
+Give AI fixed architectural rules it cannot break.
+
+Example:
+
+Architecture Rules:
+
+- Components cannot fetch data directly
+- All data must pass through services
+- State logic must live inside hooks
+- Routes must remain thin
+
+This prevents common React anti-patterns.
+
+7. Progressive Complexity Prompting
+
+Instead of jumping straight to complex features, build in progressive steps.
+
+Example:
+
+Step 1:
+
+Create a basic dashboard layout.
+
+Step 2:
+
+Add data fetching using services.
+
+Step 3:
+
+Add animations using Framer Motion.
+
+Step 4:
+
+Add performance optimizations.
+
+Why it works:
+
+Large prompts often produce unstable outputs.
+
+Progressive prompting keeps results focused and correct.
+
+8. The "Senior Engineer Mode" Prompt
+
+This technique changes how the AI behaves.
+
+Prompt:
+
+Act as a senior engineer with 15+ years of experience.
+
+Your priorities are:
+- maintainability
+- architecture clarity
+- long-term scalability
+
+Avoid quick hacks or shortcuts.
+
+This changes the decision style of the model.
+
+9. The Review Pass Technique
+
+Force the AI to review its own code like a code reviewer.
+
+Prompt addition:
+
+Review the generated code as if you are performing a senior code review.
+
+Identify:
+- architectural issues
+- readability problems
+- potential bugs
+- performance concerns
+
+AI often catches its own mistakes.
+
+10. Creative Expansion Prompt
+
+To increase creativity and product quality, ask AI to propose improvements.
+
+Prompt:
+
+Suggest improvements that could make the feature more powerful or user-friendly.
+
+Example suggestions:
+
+optimistic UI updates
+
+better animations
+
+accessibility improvements
+
+caching strategies
+
+This unlocks AI's design creativity.
+
+The Ultimate 10× Prompt Template
+
+This combines all the techniques.
+
+You can reuse this in your projects.
+
+You are a senior software architect and engineer.
+
+Follow these steps strictly:
+
+1. Analyze the feature requirements.
+2. Design the architecture.
+3. Define the folder structure.
+4. Define the component hierarchy.
+5. Define the data flow.
+
+Then implement the feature layer-by-layer:
+
+1. TypeScript types
+2. Service layer
+3. Hooks
+4. UI components
+5. Route integration
+
+Constraints:
+
+- Components under 200 lines
+- Functions under 20 lines
+- Separate UI, hooks, and services
+- Follow the project structure blueprint
+- Use reusable components
+
+After implementation:
+
+1. Refactor the code
+2. Remove duplication
+3. Improve naming clarity
+4. Simplify logic
+
+Finally perform a code review and suggest improvements.
+Advanced Insight
+
+Teams that get the best AI coding results treat AI as:
+
+Architect Assistant
++
+Code Generator
++
+Code Reviewer
+
+Most developers only use it as the third.

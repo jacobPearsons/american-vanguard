@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 
 interface UseTimerOptions {
   initialTime: number // in seconds
@@ -30,7 +30,7 @@ export function useTimer({ initialTime, onTimeUp, autoStart = false }: UseTimerO
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [isRunning, timeLeft])
+  }, [isRunning])
 
   const start = useCallback(() => setIsRunning(true), [])
   const pause = useCallback(() => setIsRunning(false), [])
@@ -39,17 +39,20 @@ export function useTimer({ initialTime, onTimeUp, autoStart = false }: UseTimerO
     setIsRunning(false)
   }, [initialTime])
 
-  const formatTime = useCallback((seconds: number) => {
+  const formatTime = useMemo(() => (seconds: number) => {
     const mins = Math.floor(seconds / 60)
     const secs = seconds % 60
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }, [])
 
+  const isWarning = useMemo(() => timeLeft > 0 && timeLeft <= 60, [timeLeft])
+  const formattedTime = useMemo(() => formatTime(timeLeft), [formatTime, timeLeft])
+
   return {
     timeLeft,
     isRunning,
-    isWarning: timeLeft > 0 && timeLeft <= 60,
-    formattedTime: formatTime(timeLeft),
+    isWarning,
+    formattedTime,
     start,
     pause,
     reset,

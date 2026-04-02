@@ -1,13 +1,18 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { currentUser } from '@clerk/nextjs'
+import { currentUser } from '@clerk/nextjs/server'
 
 export const onPaymentDetails = async () => {
-  const user = await currentUser()
+  try {
+    const user = await currentUser()
 
-  if (user) {
-    const connection = await db.user.findFirst({
+    if (!user) {
+      return null
+    }
+
+    // Find user in database - create if doesn't exist
+    let connection = await db.user.findFirst({
       where: {
         clerkId: user.id,
       },
@@ -17,8 +22,37 @@ export const onPaymentDetails = async () => {
       },
     })
 
-    if (user) {
-      return connection
+    // If user doesn't exist, create them with default values
+    if (!connection) {
+      await db.user.create({
+        data: {
+          clerkId: user.id,
+          email: user.emailAddresses[0]?.emailAddress || '',
+          name: user.fullName || '',
+          tier: 'Free',
+          credits: '10',
+        },
+      })
+      
+      // Fetch the newly created user
+      connection = await db.user.findFirst({
+        where: {
+          clerkId: user.id,
+        },
+        select: {
+          tier: true,
+          credits: true,
+        },
+      })
+    }
+
+    return connection
+  } catch (error) {
+    console.error('Error fetching payment details:', error)
+    // Return default values if database is not set up
+    return {
+      tier: 'Free',
+      credits: '10',
     }
   }
 }

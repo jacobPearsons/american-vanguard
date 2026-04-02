@@ -1,17 +1,27 @@
-import type { Metadata } from 'next'
-import { DM_Sans } from 'next/font/google'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { ClerkProvider } from '@clerk/nextjs'
 import ModalProvider from '@/providers/modal-provider'
 import { Toaster } from '@/components/ui/sonner'
-import { BillingProvider } from '@/providers/billing-provider'
-
-const font = DM_Sans({ subsets: ['latin'] })
+import { UserProvider } from '@/providers/user-provider'
 
 export const metadata: Metadata = {
-  title: 'Fuzzie.',
-  description: 'Automate Your Work With Fuzzie.',
+  title: 'American Vanguard Institute - Excellence in Education',
+  description: 'Discover world-class education at American Vanguard Institute. Explore our programs, admissions, research, and campus life.',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'AVI Student',
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#eab308',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 }
 
 export default function RootLayout({
@@ -24,19 +34,19 @@ export default function RootLayout({
       publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
     >
       <html lang="en">
-        <body className={font.className}>
+        <body>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >
-            <BillingProvider>
+            <UserProvider>
               <ModalProvider>
                 {children}
                 <Toaster />
               </ModalProvider>
-            </BillingProvider>
+            </UserProvider>
           </ThemeProvider>
         </body>
       </html>
