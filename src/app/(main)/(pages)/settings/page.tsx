@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
+import { Switch } from '@/components/ui/forms/switch'
 import { toast } from 'sonner'
 import { 
   Loader2, AlertTriangle, ExternalLink, User, Edit2, Bell, Shield, LogOut,

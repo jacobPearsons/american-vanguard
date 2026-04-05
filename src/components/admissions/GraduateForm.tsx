@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { CheckCircle, ArrowRight, ArrowLeft, Loader2, AlertCircle } from 'lucide-react'
 import { useGraduateForm } from '@/hooks/useGraduateForm'
-import { Form } from '@/components/ui/form'
+import { Form } from '@/components/ui/forms/form'
 import { 
   GraduatePersonalInfoFields, 
   GraduateAcademicBackgroundFields, 

@@ -129,7 +129,9 @@ export default function ResearchPage() {
                   'Peer-reviewed Publications'
                 ].map((item, index) => (
                   <li key={index} className="flex items-center gap-3 text-neutral-300">
+                    <Link href="/apply">
                     <ArrowRight className="h-5 w-5 text-yellow-500 flex-shrink-0" />
+                    </Link>
                     {item}
                   </li>
                 ))}

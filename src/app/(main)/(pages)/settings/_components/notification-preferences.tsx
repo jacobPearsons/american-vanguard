@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Switch } from '@/components/ui/switch'
+import { Switch } from '@/components/ui/forms/switch'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Loader2, Save } from 'lucide-react'

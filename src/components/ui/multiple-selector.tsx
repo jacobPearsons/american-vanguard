@@ -17,7 +17,7 @@ import {
   CommandGroup,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
+} from '@/components/ui/overlays/command'
 import { Command as CommandPrimitive, useCommandState } from 'cmdk'
 import { useEffect, forwardRef } from 'react'
 import { Badge } from '@/components/ui/badge'

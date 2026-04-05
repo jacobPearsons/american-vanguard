@@ -1,5 +1,5 @@
 import React from 'react'
-import { Progress } from '@/components/ui/progress'
+import { Progress } from '@/components/ui/data-display/progress'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 
 type Props = {

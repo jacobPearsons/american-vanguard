@@ -16,7 +16,7 @@ export async function connectDB() {
 
   if (!cached.promise) {
     const opts = {
-      bufferCommands: false,
+      bufferCommands: true, // Enable buffering until connection is established
     }
 
     cached.promise = mongoose.connect(MONGODB_URI, opts)
@@ -32,7 +32,8 @@ export async function connectDB() {
   return cached.conn
 }
 
-connectDB().catch(console.error)
+// Auto-connect on module load (non-blocking for backwards compatibility)
+// Note: For API routes, it's better to explicitly await connectDB() before queries
 
 async function getUserModel() {
   const mod = await import('../models/User')

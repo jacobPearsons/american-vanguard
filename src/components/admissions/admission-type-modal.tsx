@@ -8,7 +8,7 @@ import {
   DialogHeader, 
   DialogTitle,
   DialogFooter 
-} from '@/components/ui/dialog'
+} from '@/components/ui/overlays/dialog'
 import { Button } from '@/components/ui/button'
 import { 
   GraduationCap, 

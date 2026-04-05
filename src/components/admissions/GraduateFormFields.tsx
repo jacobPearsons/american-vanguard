@@ -6,7 +6,7 @@ import {
   FormItem, 
   FormLabel, 
   FormMessage 
-} from '@/components/ui/form'
+} from '@/components/ui/forms/form'
 import { APPLICATION_TERMS, GRADUATE_PROGRAMS } from './types'
 
 interface SimpleSelectProps {

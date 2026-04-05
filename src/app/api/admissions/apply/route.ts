@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { z } from 'zod'
-import { db } from '@/lib/db'
+import { db, connectDB } from '@/lib/db'
 import { validateRequest, schemas } from '@/lib/validators'
 
 export async function POST(request: NextRequest) {
   let userId: string | null = null
   
   try {
+    await connectDB()
     // Get user ID from Clerk auth - with proper error handling
     try {
       const authResult = await auth()
@@ -38,6 +39,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Debug: Log the raw body
+    console.log('[DEBUG] Raw body:', JSON.stringify(body))
+
     // Extract the actual data from the request body
     const bodyParsed = body as { type?: string; data?: Record<string, unknown> }
     
@@ -50,6 +54,11 @@ export async function POST(request: NextRequest) {
 
     const type = bodyParsed.type
     const data = bodyParsed.data
+    
+    // Debug: Log the extracted data
+    console.log('[DEBUG] Type:', type)
+    console.log('[DEBUG] Data keys:', Object.keys(data))
+    console.log('[DEBUG] Data:', JSON.stringify(data))
     
     // Get the correct schema based on application type
     const admissionType = type === 'graduate' ? 'GRADUATE' : 'UNDERGRADUATE'
@@ -161,7 +170,7 @@ export async function GET(request: NextRequest) {
   let userId: string | null = null
   
   try {
-    // Get user ID from Clerk auth
+    await connectDB()
     try {
       const authResult = await auth()
       userId = authResult.userId

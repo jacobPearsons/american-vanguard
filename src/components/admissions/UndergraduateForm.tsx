@@ -16,7 +16,7 @@
 import { Button } from '@/components/ui/button'
 import { CheckCircle, ArrowRight, ArrowLeft, Loader2, AlertCircle } from 'lucide-react'
 import { useUndergraduateForm } from '@/hooks/useUndergraduateForm'
-import { Form } from '@/components/ui/form'
+import { Form } from '@/components/ui/forms/form'
 import { 
   PersonalInfoFields, 
   AcademicBackgroundFields, 

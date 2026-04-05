@@ -7,7 +7,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
+} from '@/components/ui/overlays/tooltip'
 import { menuOptions } from '@/lib/constant'
 import clsx from 'clsx'
 import { Separator } from '@/components/ui/separator'

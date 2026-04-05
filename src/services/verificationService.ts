@@ -129,7 +129,7 @@ export const validateVerificationCode = async (
     }
   } catch (error) {
     console.error('Error validating code:', error)
-    return { valid: false, message: 'Error validating code', error: 'sz' }
+    return { valid: false, message: 'Error validating code' }
   }
 }
 
@@ -163,7 +163,7 @@ export const useVerificationCode = async (
     }
   } catch (error) {
     console.error('Error using code:', error)
-    return { valid: false, message: 'Error using code', error: 'Failed to use code' }
+    return { valid: false, message: 'Error using code' }
   }
 }
 

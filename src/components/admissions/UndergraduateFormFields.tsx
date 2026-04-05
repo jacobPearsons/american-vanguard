@@ -15,7 +15,7 @@ import {
   FormItem, 
   FormLabel, 
   FormMessage 
-} from '@/components/ui/form'
+} from '@/components/ui/forms/form'
 import { APPLICATION_TERMS, UNDERGRADUATE_MAJORS } from './types'
 
 // Simple Select Component
