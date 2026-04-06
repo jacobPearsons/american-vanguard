@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { StudentLayout } from '@/components/features/student-dashboard'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { PageHeader, StatsCard, FilterBar, DataTable, EmptyState, type Column } from '@/components/ui'
 import { Award, BookOpen, TrendingUp } from 'lucide-react'
 
 interface Grade {
@@ -27,6 +28,46 @@ const gradeColors: Record<string, string> = {
 }
 
 const gradePoints: Record<string, number> = { 'A': 4.0, 'B': 3.0, 'C': 2.0, 'D': 1.0, 'F': 0.0 }
+
+const gradeColumns: Column[] = [
+  { 
+    key: 'course', 
+    header: 'Course', 
+    render: (row: unknown) => {
+      const g = row as Grade
+      return (
+        <>
+          <p className="font-medium text-white">{g.course.code}</p>
+          <p className="text-sm text-neutral-400">{g.course.name}</p>
+        </>
+      )
+    }
+  },
+  { key: 'credits', header: 'Credits', render: (row: unknown) => (row as Grade).course.credits },
+  { key: 'score', header: 'Score', className: 'text-center', render: (row: unknown) => (row as Grade).score },
+  { 
+    key: 'grade', 
+    header: 'Grade', 
+    className: 'text-center',
+    render: (row: unknown) => {
+      const g = row as Grade
+      return (
+        <span className={`px-2 py-1 rounded text-sm font-medium ${gradeColors[g.grade] || 'bg-neutral-500/20 text-neutral-400'}`}>
+          {g.grade}
+        </span>
+      )
+    }
+  },
+  { key: 'point', header: 'Point', render: (row: unknown) => gradePoints[(row as Grade).grade]?.toFixed(1) },
+  { 
+    key: 'semester', 
+    header: 'Semester', 
+    render: (row: unknown) => {
+      const g = row as Grade
+      return <span className="text-neutral-500">{g.semester} {g.academicYear}</span>
+    }
+  }
+]
 
 export default function StudentGradesPage() {
   const [grades, setGrades] = useState<Grade[]>([])
@@ -71,132 +112,51 @@ export default function StudentGradesPage() {
   return (
     <StudentLayout studentName="Adeniyi Victor">
       <div className="min-h-screen bg-neutral-950">
-        {/* Header */}
-        <div className="bg-neutral-900 border-b border-neutral-800 px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-              <Award className="w-6 h-6 text-yellow-500" />
-              Check Result
-            </h1>
-            <p className="text-neutral-400 mt-1">View your grades and academic performance</p>
-          </div>
-        </div>
+        <PageHeader 
+          title="Check Result" 
+          description="View your grades and academic performance"
+          icon={Award}
+        />
 
-        {/* Content */}
         <div className="p-6">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3 space-y-6">
-              {/* Filters */}
-              <div className="flex gap-4">
-                <select
-                  value={semester}
-                  onChange={(e) => setSemester(e.target.value)}
-                  className="px-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white"
-                >
-                  <option value="all">All Semesters</option>
-                  {semesters.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-                <select
-                  value={academicYear}
-                  onChange={(e) => setAcademicYear(e.target.value)}
-                  className="px-4 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white"
-                >
-                  <option value="all">All Years</option>
-                  {academicYears.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
-              </div>
+              <FilterBar
+                filters={[
+                  { name: 'Semester', options: [{ value: 'all', label: 'All Semesters' }, ...semesters.map(s => ({ value: s, label: s }))], value: semester, onChange: setSemester },
+                  { name: 'Year', options: [{ value: 'all', label: 'All Years' }, ...academicYears.map(y => ({ value: y, label: y }))], value: academicYear, onChange: setAcademicYear }
+                ]}
+              />
 
-              {/* Stats Cards */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="bg-gradient-to-r from-blue-600 to-indigo-700 border-0">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-blue-200">Current GPA</p>
-                        <p className="text-3xl font-bold text-white">{currentGPA}</p>
-                        <p className="text-xs text-blue-200 mt-1">out of 4.0</p>
-                      </div>
-                      <Award className="w-10 h-10 text-white/50" />
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-neutral-900 border-neutral-800">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-neutral-400">Total Credits</p>
-                        <p className="text-3xl font-bold text-white">{totalCredits}</p>
-                        <p className="text-xs text-neutral-500 mt-1">completed</p>
-                      </div>
-                      <BookOpen className="w-10 h-10 text-yellow-500" />
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-neutral-900 border-neutral-800">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-neutral-400">Courses</p>
-                        <p className="text-3xl font-bold text-white">{grades.length}</p>
-                        <p className="text-xs text-neutral-500 mt-1">completed</p>
-                      </div>
-                      <TrendingUp className="w-10 h-10 text-green-500" />
-                    </div>
-                  </CardContent>
-                </Card>
+                <StatsCard
+                  title="Current GPA"
+                  value={currentGPA}
+                  subtitle="out of 4.0"
+                  icon={Award}
+                  variant="gradient"
+                />
+                <StatsCard
+                  title="Total Credits"
+                  value={totalCredits}
+                  subtitle="completed"
+                  icon={BookOpen}
+                />
+                <StatsCard
+                  title="Courses"
+                  value={grades.length}
+                  subtitle="completed"
+                  icon={TrendingUp}
+                />
               </div>
 
-              {/* Grades Table */}
-              <Card className="bg-neutral-900 border-neutral-800">
-                <CardHeader>
-                  <CardTitle className="text-white">Grade Report</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {loading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-yellow-600"></div>
-                    </div>
-                  ) : grades.length === 0 ? (
-                    <div className="text-center py-8 text-neutral-400">
-                      <p>No grades available for selected filters</p>
-                    </div>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="border-b border-neutral-800">
-                            <th className="px-4 py-3 text-left text-sm font-medium text-neutral-400">Course</th>
-                            <th className="px-4 py-3 text-left text-sm font-medium text-neutral-400">Credits</th>
-                            <th className="px-4 py-3 text-center text-sm font-medium text-neutral-400">Score</th>
-                            <th className="px-4 py-3 text-center text-sm font-medium text-neutral-400">Grade</th>
-                            <th className="px-4 py-3 text-left text-sm font-medium text-neutral-400">Point</th>
-                            <th className="px-4 py-3 text-left text-sm font-medium text-neutral-400">Semester</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {grades.map((grade) => (
-                            <tr key={grade.id} className="border-t border-neutral-800">
-                              <td className="px-4 py-3">
-                                <p className="font-medium text-white">{grade.course.code}</p>
-                                <p className="text-sm text-neutral-400">{grade.course.name}</p>
-                              </td>
-                              <td className="px-4 py-3 text-neutral-400">{grade.course.credits}</td>
-                              <td className="px-4 py-3 text-center text-neutral-400">{grade.score}</td>
-                              <td className="px-4 py-3 text-center">
-                                <span className={`px-2 py-1 rounded text-sm font-medium ${gradeColors[grade.grade] || 'bg-neutral-500/20 text-neutral-400'}`}>
-                                  {grade.grade}
-                                </span>
-                              </td>
-                              <td className="px-4 py-3 text-neutral-400">{gradePoints[grade.grade]?.toFixed(1)}</td>
-                              <td className="px-4 py-3 text-neutral-500">{grade.semester} {grade.academicYear}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+              <DataTable
+                columns={gradeColumns}
+                data={grades}
+                emptyMessage="No grades available for selected filters"
+                loading={loading}
+                getRowId={(row) => (row as { id: number }).id}
+              />
             </div>
 
             {/* Sidebar */}

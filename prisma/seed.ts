@@ -330,13 +330,62 @@ Week 13-15: Heat Transfer
     })
   }
 
-  console.log('Created sample announcements')
+  // Create sample notifications for test users
+  const notificationTypes = [
+    'ADMISSION_RECEIVED',
+    'ADMISSION_ACCEPTED',
+    'DOCUMENT_REQUESTED',
+    'INTERVIEW_SCHEDULED',
+    'ENROLLMENT_DEADLINE',
+    'ENGLISH_TEST_INVITE',
+    'PROFILE_VIEWED',
+  ]
+
+  const notificationTitles = [
+    { type: 'ADMISSION_RECEIVED', title: 'Application Received', message: 'Your admission application has been received and is being processed.' },
+    { type: 'ADMISSION_ACCEPTED', title: 'Congratulations!', message: 'You have been accepted to the program. Please review your admission letter.' },
+    { type: 'DOCUMENT_REQUESTED', title: 'Document Required', message: 'Please upload your transcript to complete your application.' },
+    { type: 'INTERVIEW_SCHEDULED', title: 'Interview Scheduled', message: 'Your interview has been scheduled for next week. Please check your email for details.' },
+    { type: 'ENROLLMENT_DEADLINE', title: 'Enrollment Deadline', message: 'The enrollment deadline is approaching. Complete your registration by the deadline.' },
+    { type: 'ENGLISH_TEST_INVITE', title: 'English Test Available', message: 'You have been invited to take the English proficiency test.' },
+    { type: 'PROFILE_VIEWED', title: 'Profile Viewed', message: 'A university admissions officer viewed your profile.' },
+  ]
+
+  for (let i = 1; i <= 10; i++) {
+    const userId = `student_${i}`
+    for (let j = 0; j < 3; j++) {
+      const notifData = notificationTitles[j]
+      const type = notificationTypes[j] as any
+      const daysAgo = Math.floor(Math.random() * 14)
+      const createdAt = new Date()
+      createdAt.setDate(createdAt.getDate() - daysAgo)
+
+      try {
+        await prisma.notification.create({
+          data: {
+            userId,
+            title: notifData.title,
+            message: notifData.message,
+            type,
+            isRead: Math.random() > 0.5,
+            createdAt,
+          }
+        })
+      } catch {
+        // Ignore errors
+      }
+    }
+  }
+
+  console.log('Created sample notifications for test users')
 
   console.log('\n✅ Seed complete!')
   console.log('- 5 pilot courses created')
   console.log('- 100 students with course registrations')
   console.log('- Sample forum threads and posts')
   console.log('- Sample announcements (including course-specific)')
+  console.log('- Sample notifications')
+  console.log('- (Run prisma/seed-exam.ts separately to seed exam data)')
 }
 
 main()

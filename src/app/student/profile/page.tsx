@@ -25,6 +25,7 @@ export default async function StudentProfilePage() {
     city: dbUser?.city || '',
     country: dbUser?.country || '',
     dateOfBirth: dbUser?.dateOfBirth,
+    bio: dbUser?.bio || '',
     isVerified: dbUser?.isVerified || false,
     emailVerified: clerkUser.emailAddresses[0]?.verification?.status === 'verified',
     createdAt: dbUser?.createdAt,

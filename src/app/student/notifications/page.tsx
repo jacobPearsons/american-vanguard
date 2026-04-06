@@ -1,9 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
-import { StudentSidebar, defaultNavItems } from '@/components/features/student-dashboard'
+import React, { useState, useEffect } from 'react'
+import { StudentLayout } from '@/components/features/student-dashboard'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Bell, CheckCircle, AlertCircle, Info, Trash2, Filter } from 'lucide-react'
+import { Bell, CheckCircle, AlertCircle, Info, Trash2, Loader2 } from 'lucide-react'
 
 interface Notification {
   id: number
@@ -14,33 +14,58 @@ interface Notification {
   createdAt: string
 }
 
-const mockNotifications: Notification[] = [
-  { id: 1, title: 'Course Registration Open', message: 'Second semester course registration is now open. Please register before the deadline.', type: 'info', isRead: false, createdAt: '2026-03-26T10:00:00' },
-  { id: 2, title: 'Fee Payment Reminder', message: 'Your second semester fees of ₦195,625 are due by February 15, 2026.', type: 'warning', isRead: false, createdAt: '2026-03-25T14:30:00' },
-  { id: 3, title: 'Assignment Submitted', message: 'Your EEE 505 assignment has been successfully submitted.', type: 'success', isRead: true, createdAt: '2026-03-24T09:15:00' },
-  { id: 4, title: 'Exam Schedule Released', message: 'Mid-semester examination timetable is now available.', type: 'info', isRead: true, createdAt: '2026-03-23T16:00:00' },
-  { id: 5, title: 'Library Book Due', message: 'Please return "Power Systems Analysis" by March 30, 2026.', type: 'deadline', isRead: true, createdAt: '2026-03-22T11:00:00' },
-  { id: 6, title: 'Welcome Back', message: 'Welcome to the second semester 2025/2026 session!', type: 'info', isRead: true, createdAt: '2026-01-15T08:00:00' },
-]
-
 export default function StudentNotificationsPage() {
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications)
+  const [notifications, setNotifications] = useState<Notification[]>([])
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
+  const [loading, setLoading] = useState(true)
 
-  const handleNavigate = (item: { id: string; href?: string }) => {
-    if (item.href) window.location.href = item.href
+  useEffect(() => {
+    fetchNotifications()
+  }, [filter])
+
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true)
+      const res = await fetch(`/api/student/notifications?filter=${filter}`)
+      const data = await res.json()
+      if (data.notifications) {
+        setNotifications(data.notifications)
+      }
+    } catch (error) {
+      console.error('Error fetching notifications:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const markAsRead = (id: number) => {
-    setNotifications(notifications.map(n => n.id === id ? { ...n, isRead: true } : n))
+  const markAsRead = async (id: number) => {
+    try {
+      await fetch(`/api/student/notifications/${id}`, { method: 'PATCH' })
+      setNotifications(notifications.map(n => n.id === id ? { ...n, isRead: true } : n))
+    } catch (error) {
+      console.error('Error marking notification as read:', error)
+    }
   }
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, isRead: true })))
+  const markAllAsRead = async () => {
+    try {
+      await fetch('/api/student/notifications', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'markAllRead' }),
+      })
+      setNotifications(notifications.map(n => ({ ...n, isRead: true })))
+    } catch (error) {
+      console.error('Error marking all as read:', error)
+    }
   }
 
-  const deleteNotification = (id: number) => {
-    setNotifications(notifications.filter(n => n.id !== id))
+  const deleteNotification = async (id: number) => {
+    try {
+      await fetch(`/api/student/notifications/${id}`, { method: 'DELETE' })
+      setNotifications(notifications.filter(n => n.id !== id))
+    } catch (error) {
+      console.error('Error deleting notification:', error)
+    }
   }
 
   const filteredNotifications = filter === 'unread' 
@@ -54,7 +79,7 @@ export default function StudentNotificationsPage() {
       case 'success': return <CheckCircle className="w-5 h-5 text-green-500" />
       case 'warning': return <AlertCircle className="w-5 h-5 text-yellow-500" />
       case 'deadline': return <AlertCircle className="w-5 h-5 text-red-500" />
-      default: return <Info className="w-5 h-5 text-yellow-500" />
+      default: return <Info className="w-5 h-5 text-blue-500" />
     }
   }
 
@@ -63,7 +88,7 @@ export default function StudentNotificationsPage() {
       case 'success': return 'border-l-green-500 bg-green-50'
       case 'warning': return 'border-l-yellow-500 bg-yellow-50'
       case 'deadline': return 'border-l-red-500 bg-red-50'
-      default: return 'border-l-blue-500 bg-yellow-50'
+      default: return 'border-l-blue-50 bg-blue-50'
     }
   }
 
@@ -81,25 +106,14 @@ export default function StudentNotificationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <div className="fixed left-0 top-0 h-full z-50">
-        <StudentSidebar
-          items={defaultNavItems}
-          logoSrc="../images/newllogo.png"
-          studentName="Adeniyi Victor"
-          studentImage="../uploads/11015-d14efe5e-7045-42a4-9e53-0b597c3643c0_11zon-3.jpeg"
-          activeItem="notifications"
-          onNavigate={handleNavigate}
-        />
-      </div>
-
-      <div className="flex-1 ml-64 p-6">
+    <StudentLayout>
+      <div className="p-6">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-800">
-            <span className="mr-2">🔔</span>
+            <span className="mr-2" aria-hidden="true">🔔</span>
             Notifications
             {unreadCount > 0 && (
-              <span className="ml-3 text-sm font-normal text-red-600 bg-red-100 px-3 py-1 rounded-full">
+              <span className="ml-3 text-sm font-normal text-red-600 bg-red-100 px-3 py-1 rounded-full" aria-label={`${unreadCount} unread notifications`}>
                 {unreadCount} unread
               </span>
             )}
@@ -109,19 +123,29 @@ export default function StudentNotificationsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-3 space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex gap-2">
+            <div className="flex items-center justify-between" role="group" aria-label="Notification filters">
+              <div className="flex gap-2" role="tablist" aria-label="Filter by status">
                 <button
+                  role="tab"
+                  aria-selected={filter === 'all'}
+                  aria-controls="notifications-panel"
+                  id="all-tab"
+                  tabIndex={filter === 'all' ? 0 : -1}
                   onClick={() => setFilter('all')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 ${
                     filter === 'all' ? 'bg-yellow-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'
                   }`}
                 >
                   All
                 </button>
                 <button
+                  role="tab"
+                  aria-selected={filter === 'unread'}
+                  aria-controls="notifications-panel"
+                  id="unread-tab"
+                  tabIndex={filter === 'unread' ? 0 : -1}
                   onClick={() => setFilter('unread')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 ${
                     filter === 'unread' ? 'bg-yellow-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'
                   }`}
                 >
@@ -130,34 +154,43 @@ export default function StudentNotificationsPage() {
               </div>
               <button
                 onClick={markAllAsRead}
-                className="text-sm text-yellow-600 hover:text-yellow-800"
+                className="text-sm text-yellow-600 hover:text-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 rounded px-2 py-1"
+                disabled={unreadCount === 0}
+                aria-label="Mark all notifications as read"
               >
                 Mark all as read
               </button>
             </div>
 
-            {filteredNotifications.length === 0 ? (
-              <div className="bg-white rounded-lg shadow p-12 text-center">
+            {loading ? (
+              <div className="bg-white rounded-lg shadow p-12 text-center" role="status" aria-live="polite">
+                <Loader2 className="w-8 h-8 text-yellow-600 mx-auto animate-spin" />
+                <p className="text-gray-500 mt-2">Loading notifications...</p>
+              </div>
+            ) : filteredNotifications.length === 0 ? (
+              <div className="bg-white rounded-lg shadow p-12 text-center" role="status">
                 <Bell className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-600">No notifications</h3>
                 <p className="text-gray-500">You're all caught up!</p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-3" role="list" aria-label="Notifications list">
                 {filteredNotifications.map((notification) => (
                   <div
                     key={notification.id}
+                    role="listitem"
+                    aria-labelledby={`notification-title-${notification.id}`}
                     className={`p-4 rounded-lg border-l-4 bg-white shadow-sm hover:shadow-md transition-shadow ${getTypeColor(notification.type)}`}
                   >
                     <div className="flex items-start gap-4">
-                      <div className="mt-1">{getTypeIcon(notification.type)}</div>
+                      <div className="mt-1" aria-hidden="true">{getTypeIcon(notification.type)}</div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <h3 className={`font-semibold ${notification.isRead ? 'text-gray-600' : 'text-gray-800'}`}>
+                          <h3 id={`notification-title-${notification.id}`} className={`font-semibold ${notification.isRead ? 'text-gray-600' : 'text-gray-800'}`}>
                             {notification.title}
                           </h3>
                           {!notification.isRead && (
-                            <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                            <span className="w-2 h-2 bg-yellow-500 rounded-full" aria-label="Unread"></span>
                           )}
                         </div>
                         <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
@@ -167,16 +200,16 @@ export default function StudentNotificationsPage() {
                         {!notification.isRead && (
                           <button
                             onClick={() => markAsRead(notification.id)}
-                            className="p-2 text-gray-400 hover:text-yellow-600"
-                            title="Mark as read"
+                            className="p-2 text-gray-400 hover:text-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 rounded"
+                            aria-label={`Mark "${notification.title}" as read`}
                           >
                             <CheckCircle className="w-4 h-4" />
                           </button>
                         )}
                         <button
                           onClick={() => deleteNotification(notification.id)}
-                          className="p-2 text-gray-400 hover:text-red-600"
-                          title="Delete"
+                          className="p-2 text-gray-400 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 rounded"
+                          aria-label={`Delete notification "${notification.title}"`}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -217,9 +250,9 @@ export default function StudentNotificationsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center p-2 bg-yellow-50 rounded">
+                  <div className="flex justify-between items-center p-2 bg-blue-50 rounded">
                     <span className="text-sm text-gray-600">Info</span>
-                    <span className="text-sm font-medium text-yellow-600">
+                    <span className="text-sm font-medium text-blue-600">
                       {notifications.filter(n => n.type === 'info').length}
                     </span>
                   </div>
@@ -247,6 +280,6 @@ export default function StudentNotificationsPage() {
           </div>
         </div>
       </div>
-    </div>
+    </StudentLayout>
   )
 }

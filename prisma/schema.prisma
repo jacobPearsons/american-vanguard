@@ -32,6 +32,7 @@ model User {
   city            String?
   country         String?
   nationality    String?
+  bio             String?   @db.Text
   
   // Account Status
   isVerified      Boolean   @default(false)
@@ -580,6 +581,8 @@ model Course {
   materials       LibraryMaterial[]
   announcements   Announcement[]
   forumThreads    ForumThread[]
+  examSchedules   ExamSchedule[]
+  examResults     ExamResult[]
 }
 
 model StudentRegistration {
@@ -780,4 +783,54 @@ model ForumPost {
   authorId    String
   authorName  String
   createdAt   DateTime    @default(now())
+}
+
+// ============================================
+// EXAMS
+// ============================================
+
+enum ExamType {
+  MID_SEMESTER
+  FINAL
+  QUIZ
+}
+
+enum ExamStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+}
+
+model ExamSchedule {
+  id              Int       @id @default(autoincrement())
+  courseId        Int
+  course          Course    @relation(fields: [courseId], references: [id])
+  examType        ExamType
+  date            DateTime
+  startTime       String
+  endTime         String
+  venue           String
+  instructions    String?   @db.Text
+  status          ExamStatus @default(UPCOMING)
+  totalQuestions  Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([courseId, examType, date])
+}
+
+model ExamResult {
+  id              Int       @id @default(autoincrement())
+  studentId       String
+  courseId        Int
+  course          Course    @relation(fields: [courseId], references: [id])
+  examType        ExamType
+  score           Int
+  totalQuestions  Int
+  percentage      Float
+  grade           String
+  completedAt     DateTime
+  createdAt       DateTime  @default(now())
+
+  @@unique([studentId, courseId, completedAt])
 }
