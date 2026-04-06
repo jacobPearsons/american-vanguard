@@ -323,14 +323,55 @@ export const ADMISSIONS_STAGE_ICONS: Record<string, React.ComponentType<{ classN
 }
 
 /**
+ * Admissions flow summary interface
+ */
+export interface AdmissionsFlowSummary {
+  currentStage: AdmissionsStage
+  progress: number
+  completedStages: number
+  totalStages: number
+  remainingStages: AdmissionsStage[]
+}
+
+/**
+ * Admissions stage progress interface
+ */
+export interface AdmissionsStageProgress {
+  stage: AdmissionsStageInfo | undefined
+  progress: number
+  allowedNextStages: AdmissionsStage[]
+  nextStage: AdmissionsStage | null
+}
+
+/**
+ * Transition validation result interface
+ */
+export interface TransitionValidationResult {
+  valid: boolean
+  reason?: string
+}
+
+/**
+ * Acceptance processing result interface
+ */
+export interface AcceptanceResult {
+  success: boolean
+  letterUrl?: string
+  message?: string
+}
+
+/**
  * Get program stages for a program type
+ * @param programType - The program type
+ * @returns Array of admissions stages for the program
  */
 export const getProgramStages = (programType: ProgramType): AdmissionsStage[] => {
-  return PROGRAM_ADMISSIONS_STAGES[programType] || PROGRAM_ADMISSIONS_STAGES.undergraduate
+  return PROGRAM_ADMISSIONS_STAGES[programType] ?? PROGRAM_ADMISSIONS_STAGES.undergraduate
 }
 
 /**
  * Get all admissions stages
+ * @returns Array of all admissions stage info
  */
 export const getAllAdmissionsStages = (): AdmissionsStageInfo[] => {
   return ADMISSIONS_STAGES
@@ -338,16 +379,16 @@ export const getAllAdmissionsStages = (): AdmissionsStageInfo[] => {
 
 /**
  * Get admissions flow summary
+ * @param currentStage - Current stage in the admissions process
+ * @param programType - Type of program (undergraduate, graduate, etc.)
+ * @returns Flow summary with progress and remaining stages
  */
-export const getAdmissionsFlowSummary = (currentStage: AdmissionsStage, programType: ProgramType): {
-  currentStage: string
-  progress: number
-  completedStages: number
-  totalStages: number
-  remainingStages: AdmissionsStage[]
-} => {
+export const getAdmissionsFlowSummary = (
+  currentStage: AdmissionsStage,
+  programType: ProgramType
+): AdmissionsFlowSummary => {
   const progress = getAdmissionsProgressPercentage(currentStage)
-  const currentIndex = ADMISSIONS_STAGES.findIndex(s => s.id === currentStage)
+  const currentIndex = ADMISSIONS_STAGES.findIndex((s) => s.id === currentStage)
   const completedStages = currentIndex + 1
   const totalStages = ADMISSIONS_STAGES.length
   
@@ -362,8 +403,10 @@ export const getAdmissionsFlowSummary = (currentStage: AdmissionsStage, programT
 
 /**
  * Get admissions stage progress
+ * @param stage - Current admissions stage
+ * @returns Stage progress info including allowed transitions
  */
-export const getAdmissionsStageProgress = (stage: AdmissionsStage) => {
+export const getAdmissionsStageProgress = (stage: AdmissionsStage): AdmissionsStageProgress => {
   const stageInfo = getAdmissionsStageInfo(stage)
   const progress = getAdmissionsProgressPercentage(stage)
   const allowed = getAllowedAdmissionsTransitions(stage)
@@ -378,31 +421,34 @@ export const getAdmissionsStageProgress = (stage: AdmissionsStage) => {
 }
 
 /**
- * Get remaining stages
+ * Get remaining stages after current stage
+ * @param currentStage - Current admissions stage
+ * @returns Array of remaining stages
  */
 export const getAdmissionsRemainingStages = (currentStage: AdmissionsStage): AdmissionsStage[] => {
-  const currentIndex = ADMISSIONS_STAGES.findIndex(s => s.id === currentStage)
+  const currentIndex = ADMISSIONS_STAGES.findIndex((s) => s.id === currentStage)
   if (currentIndex === -1) return []
   
-  return ADMISSIONS_STAGES.slice(currentIndex + 1).map(s => s.id)
+  return ADMISSIONS_STAGES.slice(currentIndex + 1).map((s) => s.id)
 }
 
 /**
  * Validate admissions transition
+ * @param currentStage - Current admissions stage
+ * @param targetStage - Target admissions stage
+ * @returns Validation result with reason if invalid
  */
 export const validateAdmissionsTransition = (
   currentStage: AdmissionsStage,
   targetStage: AdmissionsStage
-): { valid: boolean; reason?: string } => {
-  // Same stage - no transition needed
+): TransitionValidationResult => {
   if (currentStage === targetStage) {
     return { valid: true }
   }
   
-  const currentIndex = ADMISSIONS_STAGES.findIndex(s => s.id === currentStage)
-  const targetIndex = ADMISSIONS_STAGES.findIndex(s => s.id === targetStage)
+  const currentIndex = ADMISSIONS_STAGES.findIndex((s) => s.id === currentStage)
+  const targetIndex = ADMISSIONS_STAGES.findIndex((s) => s.id === targetStage)
   
-  // Can only move forward or stay
   if (targetIndex < currentIndex) {
     return {
       valid: false,
@@ -414,29 +460,38 @@ export const validateAdmissionsTransition = (
 }
 
 /**
- * Get allowed admissions transitions
+ * Get allowed admissions transitions from current stage
+ * @param currentStage - Current admissions stage
+ * @returns Array of allowed next stages
  */
 export const getAllowedAdmissionsTransitions = (currentStage: AdmissionsStage): AdmissionsStage[] => {
-  const currentIndex = ADMISSIONS_STAGES.findIndex(s => s.id === currentStage)
+  const currentIndex = ADMISSIONS_STAGES.findIndex((s) => s.id === currentStage)
   if (currentIndex === -1 || currentIndex >= ADMISSIONS_STAGES.length - 1) {
     return []
   }
   
-  // Can only advance to next stage
   return [ADMISSIONS_STAGES[currentIndex + 1].id]
 }
 
 /**
- * Calculate admissions completion
+ * Calculate admissions completion percentage
+ * @param stage - Current admissions stage
+ * @returns Completion percentage (0-100)
  */
 export const calculateAdmissionsCompletion = (stage: AdmissionsStage): number => {
   return getAdmissionsProgressPercentage(stage)
 }
 
 /**
- * Process acceptance (placeholder)
+ * Process student acceptance
+ * @param applicationId - Application ID
+ * @returns Acceptance processing result
  */
-export const processAcceptance = async (applicationId: string): Promise<{ success: boolean }> => {
+export const processAcceptance = async (applicationId: string): Promise<AcceptanceResult> => {
   console.log('Processing acceptance for:', applicationId)
-  return { success: true }
+  // In production, this would generate a letter and update the database
+  return { 
+    success: true,
+    message: 'Acceptance processed successfully'
+  }
 }
