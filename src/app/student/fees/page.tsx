@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { auth } from '@clerk/nextjs/server'
-import { db } from '@/lib/db'
+import { db } from '@/lib/prisma'
 import { StudentFeesClient } from './StudentFeesClient'
 
 async function getPaymentData(userId: string) {
@@ -11,10 +11,8 @@ async function getPaymentData(userId: string) {
   return payments.map((p: any) => ({ ...p, id: p._id?.toString() || p.id }))
 }
 
-async function getUserData(userId: string) {
-  const { db } = await import('@/lib/db')
+async function getUserData() {
   const { currentUser } = await import('@clerk/nextjs/server')
-  
   const user = await currentUser()
   return {
     name: user?.fullName || user?.username || 'Student',
@@ -43,14 +41,11 @@ export default async function StudentFeesPage() {
   }
 
   const payments = await getPaymentData(userId)
-  const userData = await getUserData(userId)
+  const userData = await getUserData()
 
   return (
     <Suspense fallback={<div className="p-8">Loading fees...</div>}>
-      <StudentFeesClient 
-        payments={payments} 
-        userData={userData}
-      />
+      <StudentFeesClient payments={payments} userData={userData} />
     </Suspense>
   )
 }

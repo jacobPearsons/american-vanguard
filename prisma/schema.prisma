@@ -571,11 +571,15 @@ model Course {
   academicYear    String
   instructorId    Int?
   instructor      Faculty?  @relation(fields: [instructorId], references: [id])
+  syllabus        String?   @db.Text
+  facilityTags    String[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   registrations   StudentRegistration[]
   grades          Grade[]
   materials       LibraryMaterial[]
+  announcements   Announcement[]
+  forumThreads    ForumThread[]
 }
 
 model StudentRegistration {
@@ -616,6 +620,8 @@ model Announcement {
   type          AnnouncementType
   departmentId  Int?
   department    Department?       @relation(fields: [departmentId], references: [id])
+  courseId      Int?
+  course        Course?           @relation(fields: [courseId], references: [id])
   isPinned      Boolean           @default(false)
   isActive      Boolean           @default(true)
   publishedAt   DateTime          @default(now())
@@ -749,4 +755,29 @@ model Payment {
   paidAt        DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model ForumThread {
+  id          Int         @id @default(autoincrement())
+  courseId    Int?
+  course      Course?     @relation(fields: [courseId], references: [id])
+  title       String
+  content     String      @db.Text
+  authorId    String
+  authorName  String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  isPinned    Boolean     @default(false)
+  isLocked    Boolean     @default(false)
+  posts       ForumPost[]
+}
+
+model ForumPost {
+  id          Int         @id @default(autoincrement())
+  threadId    Int
+  thread      ForumThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  content     String      @db.Text
+  authorId    String
+  authorName  String
+  createdAt   DateTime    @default(now())
 }

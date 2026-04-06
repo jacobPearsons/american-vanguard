@@ -6,7 +6,7 @@
  */
 
 import { currentUser, auth } from '@clerk/nextjs/server'
-import { db } from '@/lib/db'
+import { db } from '@/lib/prisma'
 import type { AuthUser } from '@/types/auth'
 
 export async function getCurrentUser(): Promise<AuthUser | null> {

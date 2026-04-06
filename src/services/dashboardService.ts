@@ -10,7 +10,7 @@
  * - No fetch logic inside UI files
  */
 
-import { db } from '@/lib/db'
+import { db } from '@/lib/prisma'
 import type { 
   DashboardData, 
   DashboardStats, 

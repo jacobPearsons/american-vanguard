@@ -5,6 +5,8 @@
  * Following component design rules from docs/component-design-rules.md
  */
 
+'use client'
+
 import React, { useState } from 'react'
 import type { DashboardTab } from '@/types/studentDashboard'
 

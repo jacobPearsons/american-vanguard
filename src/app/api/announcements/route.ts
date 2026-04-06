@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db } from '@/lib/prisma'
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const type = searchParams.get('type')
     const departmentId = searchParams.get('departmentId')
+    const courseId = searchParams.get('courseId')
 
     const where: any = {
       isActive: true,
@@ -17,6 +18,7 @@ export async function GET(request: NextRequest) {
 
     if (type) where.type = type
     if (departmentId) where.departmentId = parseInt(departmentId, 10)
+    if (courseId) where.courseId = parseInt(courseId, 10)
 
     const announcements = await db.announcement.findMany({
       where,

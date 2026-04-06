@@ -12,7 +12,7 @@ import {
   getAcceptanceLetter, 
   validateAcceptanceReadiness 
 } from '@/services/acceptanceLetterService'
-import { db } from '@/lib/db'
+import { db } from '@/lib/prisma'
 import { AdmissionStatus, AdmissionType, ApplicationTerm } from '@/types/prisma'
 
 // Mock the database

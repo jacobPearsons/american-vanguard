@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { z } from 'zod'
-import { db, connectDB } from '@/lib/db'
+import { db } from '@/lib/prisma'
 import { validateRequest, schemas } from '@/lib/validators'
 
 export async function POST(request: NextRequest) {
   let userId: string | null = null
   
   try {
-    await connectDB()
     // Get user ID from Clerk auth - with proper error handling
     try {
       const authResult = await auth()
@@ -170,7 +169,6 @@ export async function GET(request: NextRequest) {
   let userId: string | null = null
   
   try {
-    await connectDB()
     try {
       const authResult = await auth()
       userId = authResult.userId

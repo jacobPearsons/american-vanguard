@@ -12,7 +12,7 @@
  */
 
 import { pdf } from '@react-pdf/renderer'
-import { db } from '@/lib/db'
+import { db } from '@/lib/prisma'
 import { AdmissionStatus, AdmissionType, ApplicationTerm } from '@/types/prisma'
 
 // Institution details (could be moved to config)

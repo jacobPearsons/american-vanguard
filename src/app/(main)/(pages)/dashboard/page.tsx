@@ -10,7 +10,7 @@
 
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { db } from '@/lib/db'
+import { db } from '@/lib/prisma'
 import { DashboardClient } from './DashboardClient'
 
 export default async function DashboardPage() {

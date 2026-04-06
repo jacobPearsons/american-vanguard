@@ -1,6 +1,6 @@
 'use server'
 
-import { db } from '@/lib/db'
+import { db } from '@/lib/prisma'
 import { currentUser } from '@clerk/nextjs/server'
 
 // Get user dashboard data - simplified version

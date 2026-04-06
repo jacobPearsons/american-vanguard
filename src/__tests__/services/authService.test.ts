@@ -6,7 +6,7 @@
  */
 
 import { getCurrentUser, getCurrentUserId, getUserFromDatabase, isAuthenticated } from '@/services/authService'
-import { db } from '@/lib/db'
+import { db } from '@/lib/prisma'
 
 const mockCurrentUser = jest.fn()
 const mockAuth = jest.fn()

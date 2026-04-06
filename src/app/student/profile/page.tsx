@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { currentUser } from '@clerk/nextjs/server'
-import { db } from '@/lib/db'
+import { db } from '@/lib/prisma'
 import { StudentProfileClient } from './StudentProfileClient'
 
 export default async function StudentProfilePage() {

@@ -2,7 +2,7 @@ import { google } from 'googleapis'
 import { auth, clerkClient } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
-import { db } from '@/lib/db'
+import { db } from '@/lib/prisma'
 
 export async function GET() {
   const oauth2Client = new google.auth.OAuth2(

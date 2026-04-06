@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/global/navbar'
-import { db } from '@/lib/db'
+import { db } from '@/lib/prisma'
 import { 
   FileText, 
   Clock, 

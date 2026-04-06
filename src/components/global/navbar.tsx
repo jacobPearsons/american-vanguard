@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
-import { MenuIcon, BookOpen, Users, Mail } from 'lucide-react'
+import { MenuIcon, BookOpen, Users, Mail, GraduationCap } from 'lucide-react'
 import { UserButton, useUser } from '@clerk/nextjs'
 import { AnnouncementModal } from '@/components/announcements'
 
@@ -53,6 +53,17 @@ const Navbar = () => {
           <li>
             <Link href="/research" className="text-neutral-300 hover:text-white transition-colors text-sm font-medium">
               Research
+            </Link>
+          </li>
+          <li>
+            <Link href="/courses" className="text-neutral-300 hover:text-white transition-colors text-sm font-medium flex items-center gap-1">
+              <GraduationCap className="h-4 w-4" />
+              Courses
+            </Link>
+          </li>
+          <li>
+            <Link href="/courses/discover" className="text-neutral-300 hover:text-white transition-colors text-sm font-medium">
+              Discover
             </Link>
           </li>
           <li>
