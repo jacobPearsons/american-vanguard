@@ -20,6 +20,7 @@ import {
   Upload,
   PenTool,
   HelpCircle,
+  MessageCircle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -66,6 +67,7 @@ const navItems: NavItem[] = [
   { id: 'timetable', label: 'Lecture Timetable', icon: Calendar, href: '/student/timetable' },
   { id: 'exams', label: 'Exams', icon: Calendar, href: '/student/exams' },
   { id: 'notifications', label: 'Notifications', icon: Bell, href: '/student/notifications' },
+  { id: 'messages', label: 'Messages', icon: MessageCircle, href: '/student/messages' },
   { id: 'elearning-page', label: 'E-Learning Portal', icon: BookOpen, href: '/student/elearning' },
   { id: 'settings', label: 'Settings', icon: Settings, href: '/settings' },
   { id: 'help', label: 'Help & Support', icon: HelpCircle, href: '/contact' },
